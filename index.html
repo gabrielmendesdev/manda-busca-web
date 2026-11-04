@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no">
+    <title>PipaGame</title>
+    <style>
+      html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #0f1a2e; }
+      #unity-canvas { position: fixed; left: 0; top: 0; width: 100%; height: 100%; display: block; outline: none; background: #0f1a2e;
+                      touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+      #carregando { position: fixed; left: 50%; top: 50%; width: 46%; max-width: 420px; transform: translate(-50%, -50%);
+                    font: bold 20px sans-serif; color: #f2f2f2; text-align: center; }
+      #barra { margin-top: 14px; height: 10px; border-radius: 5px; background: rgba(255,255,255,0.15); overflow: hidden; }
+      #barra div { height: 100%; width: 0%; background: #ffd23a; transition: width 0.2s; }
+    </style>
+    <!-- SDK da Poki: anúncios, início e pausa da partida. Sem ele (bloqueador de anúncio), o jogo roda igual. -->
+    <script src="https://game-cdn.poki.com/scripts/v2/poki-sdk.js"></script>
+  </head>
+  <body>
+    <canvas id="unity-canvas" tabindex="-1"></canvas>
+    <div id="carregando">MANDA BUSCA<div id="barra"><div></div></div></div>
+    <script src="Build/Web.loader.js"></script>
+    <script>
+      // setas e espaço não rolam a página da Poki enquanto se joga
+      window.addEventListener("keydown", function (e) {
+        if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].indexOf(e.key) >= 0) e.preventDefault();
+      });
+      window.addEventListener("wheel", function (e) { e.preventDefault(); }, { passive: false });
+      var canvas = document.querySelector("#unity-canvas");
+      canvas.addEventListener("pointerdown", function () { canvas.focus(); window.focus(); });
+      var barra = document.querySelector("#barra div");
+      var sdk = window.PokiSDK ? PokiSDK.init().catch(function () {}) : Promise.resolve();
+      sdk.then(function () {
+        return createUnityInstance(canvas, {
+          arguments: [],
+          primaryDataUrls: ["globalgamemanagers","globalgamemanagers.assets","level0","resources.assets","Resources/unity_builtin_extra","RuntimeInitializeOnLoads.json","ScriptingAssemblies.json","sharedassets0.assets","boot.config","Il2CppData/Metadata/global-metadata.dat","Resources/unity default resources"],
+          secondaryDataUrls: ["level1","sharedassets1.assets","sharedassets1.resource"],
+          frameworkUrl: "Build/Web.framework.js",
+          codeUrl: "Build/Web.wasm",
+          streamingAssetsUrl: "StreamingAssets",
+          companyName: "DefaultCompany",
+          productName: "PipaGame",
+          productVersion: "1.0",
+        }, function (p) { barra.style.width = Math.round(p * 100) + "%"; });
+      }).then(function (unityInstance) {
+        window.pipaUnity = unityInstance;
+        document.querySelector("#carregando").style.display = "none";
+        // o gameLoadingFinished vem do jogo (PipaPoki), quando o bairro termina de chegar
+      }).catch(function (message) {
+        document.querySelector("#carregando").textContent = message;
+      });
+    </script>
+  </body>
+</html>
