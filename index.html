@@ -25,6 +25,11 @@
         if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].indexOf(e.key) >= 0) e.preventDefault();
       });
       window.addEventListener("wheel", function (e) { e.preventDefault(); }, { passive: false });
+      // atalhos do navegador com Ctrl que atrapalham no meio do jogo (recarregar, salvar, buscar, imprimir...);
+      // Ctrl+W, Ctrl+T e Ctrl+N o navegador não deixa nenhuma página segurar
+      window.addEventListener("keydown", function (e) {
+        if ((e.ctrlKey || e.metaKey) && "rRsSfFpPdDuUhHjJoOgGlLkKeEbBqQ".indexOf(e.key) >= 0) e.preventDefault();
+      });
       var canvas = document.querySelector("#unity-canvas");
       canvas.addEventListener("pointerdown", function () { canvas.focus(); window.focus(); });
       var barra = document.querySelector("#barra div");
