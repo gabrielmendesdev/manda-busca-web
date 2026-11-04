@@ -40,6 +40,8 @@
           companyName: "DefaultCompany",
           productName: "PipaGame",
           productVersion: "1.0",
+          // celular desenha em 3x a resolução da tela e gasta a placa à toa: no máximo 1,5x
+          devicePixelRatio: Math.min(window.devicePixelRatio || 1, 1.5),
         }, function (p) { barra.style.width = Math.round(p * 100) + "%"; });
       }).then(function (unityInstance) {
         window.pipaUnity = unityInstance;
